@@ -50,71 +50,119 @@
 在PriorityQueue的add(E e)方法中就是使用的向上调整，整体逻辑是：将要插入的节点放在**队尾元素**，然后与**其父节点相比较**，如果其值**小于其父节点**的值，则将其**父节点下移**，直到**遇到第一个满足父节点值小于当前添加节点的值**的时候结束。
 其具体实现为，时间复杂度为log(n)：
 ```java
-add (E e) {
-	int i = size;
-	if (i > queue.length) {
-		grow(i + 1);
-	}
-	size = i + 1;
-	if (i == 0)
-		queue[i] = e;
-	else 
-		fitUp(i, e);
-}
+    public int getRealSize() {
+        int i = 0;
+        for (; i < queue.length; i++) {
+            Object o = queue[i];
+            if (o == null)
+                break;
+        }
+        return i;
+    }
+    
+    private void grow() {
+        int newLength = queue.length;
+        if (queue.length < 32) {
+            newLength += growStep;
+        } else {
+            newLength += newLength >>> 1;
+        }
 
-fitUp (int index, E e) {
-	while(index > 0) {
-		int child = (index - 1) >>> 1;
-		if (e.compareTo(queue[child]) > 0)
-			break;
-		queue[index] = queue[child];
-		index = child;	
-	}
-	queue[index] = e;
-}
+        queue = Arrays.copyOf(queue, newLength);
+    }
+
+    public void add(E e) {
+        int realSize = getRealSize();
+
+        if (realSize == queue.length) {
+            grow();
+        }
+        if (realSize == 0) {
+            queue[0] = e;
+        } else {
+            fitUP(realSize + 1, e);
+        }
+    }
+
+    public void fitUP(int fitIndex, E e) {
+        while(fitIndex > 0) {
+            int parent = (fitIndex - 1) >>> 1;
+            if (e.compareTo(queue[parent]) > 0) {
+                break;
+            }
+            queue[fitIndex] = queue[parent];
+            fitIndex = parent;
+        }
+
+        queue[fitIndex] = e;
+    }
 ```
 
 在PriorityQueue移除队首元素时，也会去调整原来的小顶堆，使其成为新的小顶堆，这里调用的向下调整方法，其具体逻辑时：
 首先查找要**删除的节点的index **，这里的index=0。然后用**队尾元素****替换**当前**删除index元素**，然后与其**左右孩子节点的较小的一方**比较。如果父节点**大于**其孩子节点，则将孩子节点**上移**，直到遇到第一个父节点值**比孩子节点小**的情况结束。其具体实现如下，时间复杂度为log(n)：
 ```java
-E poll() {
-	if (size == 0)
-		return null;
-	int s = --size;
-	E result = queue[0];
-	if (s == 0) {
-		queue[0] = null;
-	} else {
-		E x = queue[s];
-		queue[s] = null;
-		fitDown(0, x);
-	}
-	return result;
-}
+    public E pop() {
+        int realSize = getRealSize();
 
-fitDown(int index, E e) {
-	int half = (size - 1) >>> 1;
-	while (index < half) {
-		int child = index * 2 + 1;
-		int right = child + 1;
-		E c = queue[child];
-		if (right < size && c.copmareTo(queue[right])) {
-			child = right;
-			c = queue[right];
-		}
+        int s = --realSize;
+        E e = (E) queue[0];
+        if (s == 0) {
+            queue[0] = null;
+        } else {
+            E last = (E) queue[s];
+            queue[s] = null;
+            fitDown(0, last);
+        }
 
-		if (e.compareTo(c) < 0)
-			break;
-		queue[index] = c;
-		index = child;
-	}
-	queue[index] = e;
-}
+        return e;
+    }
+
+
+    public void fitDown(int fitIndex, E e) {
+        int half = (fitIndex - 1) >>> 1;
+        while (fitIndex < half) {
+            int child = fitIndex * 2 + 1;
+            int right = child + 1;
+            E c = (E) queue[child];
+            if (right < getRealSize() && c.compareTo(queue[right]) > 0) {
+                child = right;
+                c = (E) queue[child];
+            }
+
+            if (e.compareTo(c) < 0) {
+                break;
+            }
+            queue[fitIndex] = c;
+            fitIndex = child;
+        }
+
+        queue[fitIndex] = e;
+    }
 ```
 
 如果小顶堆要删除指定位置元素，这里也会分为两种情况：
 1、删除元素为队尾元素，则直接将队尾置NULL
 2、删除元素为非队尾元素，则和上面删除队首元素的逻辑相似：首先确定要删除的元素的index，然后用队尾元素替换该元素，然后移除向下调整。逻辑和上面一样。
+```java
+    public int getItemIndex(E e) {
+        for (int i = 0; i < getRealSize(); i++) {
+            if (e.compareTo(queue[i]) == 0)
+                return i;
+        }
+        return -1;
+    }
+
+    public void remove(E e) {
+        int deleteIndex = getItemIndex(e);
+        if (deleteIndex == getRealSize() - 1) {
+            queue[deleteIndex] = null;
+        } else {
+            E last = (E) queue[getRealSize() - 1];
+            queue[getRealSize() - 1] = null;
+            fitDown(deleteIndex, last);
+        }
+    }
+```
 
 ## 3、二叉排序（查找）树
 满足以下条件的二叉树：
