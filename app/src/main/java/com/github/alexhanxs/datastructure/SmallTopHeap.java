@@ -35,12 +35,12 @@ public class SmallTopHeap<E extends Comparable> {
         if (realSize == 0) {
             queue[0] = e;
         } else {
-            fitUP(realSize + 1, e);
+            fitUP(realSize, e);
         }
     }
 
     public void fitUP(int fitIndex, E e) {
-        while(fitIndex > 0) {
+        while (fitIndex > 0) {
             int parent = (fitIndex - 1) >>> 1;
             if (e.compareTo(queue[parent]) > 0) {
                 break;
@@ -55,7 +55,7 @@ public class SmallTopHeap<E extends Comparable> {
     public E pop() {
         int realSize = getRealSize();
 
-        int s = --realSize;
+        int s = realSize - 1;
         E e = (E) queue[0];
         if (s == 0) {
             queue[0] = null;
@@ -70,7 +70,7 @@ public class SmallTopHeap<E extends Comparable> {
 
 
     public void fitDown(int fitIndex, E e) {
-        int half = (fitIndex - 1) >>> 1;
+        int half = (getRealSize() - 1) >>> 1;
         while (fitIndex < half) {
             int child = fitIndex * 2 + 1;
             int right = child + 1;
@@ -109,7 +109,6 @@ public class SmallTopHeap<E extends Comparable> {
         }
     }
 
-
     public int getRealSize() {
         int i = 0;
         for (; i < queue.length; i++) {
@@ -119,4 +118,46 @@ public class SmallTopHeap<E extends Comparable> {
         }
         return i;
     }
+
+    public void floorSee(StringBuilder sb) {
+        int curFloor = 0;
+        int curFloorStart = (int) Math.pow(2, curFloor) - 1;
+        int curFloorEnd = curFloorStart + (int) Math.pow(2, curFloor) - 1;
+
+        for (int i = curFloorStart; i <= curFloorEnd && i < getRealSize(); i++) {
+
+            Object o = queue[i];
+            if (queue != null) {
+                sb.append(o).append("_");
+            } else {
+                break;
+            }
+            if (i == curFloorEnd) {
+                sb.append("\n");
+                curFloor ++;
+                curFloorStart = (int) Math.pow(2, curFloor) - 1;
+                curFloorEnd = curFloorStart + (int) Math.pow(2, curFloor) - 1;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SmallTopHeap<Integer> heap = new SmallTopHeap<>();
+        heap.add(20);
+        heap.add(24);
+        heap.add(19);
+        heap.add(5);
+        heap.add(25);
+        heap.add(30);
+        heap.add(1);
+
+//        heap.pop();
+//        heap.pop();
+        heap.remove(19);
+
+        StringBuilder builder = new StringBuilder();
+        heap.floorSee(builder);
+
+        System.out.print(builder.toString());
+     }
 }
