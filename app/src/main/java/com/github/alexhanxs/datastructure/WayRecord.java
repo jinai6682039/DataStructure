@@ -27,7 +27,7 @@ public class WayRecord {
     List<List<WayNode>> ways = new ArrayList<>();
 
     public void getAllWay() throws IOException, ClassNotFoundException {
-
+        ways.clear();
         if (canGoX) {
 
             List<WayNode> way = new ArrayList<>();
@@ -79,7 +79,9 @@ public class WayRecord {
 
     public void showWays() throws IOException, ClassNotFoundException {
         getAllWay();
+
         if (ways != null) {
+            System.out.println(ways.size());
             for (List<WayNode> way : ways) {
                 StringBuilder sb = new StringBuilder();
                 for (WayNode node : way) {
