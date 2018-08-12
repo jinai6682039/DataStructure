@@ -1173,6 +1173,61 @@ RL：P为GP的右子树、N为P的左子树。
 除此之外，上面情况有一个很明显的共同点：N的兄弟节点为黑色。所以对与S为红色的时候，我们只需进行一次旋转，使N有一个黑色的兄弟节点。当S为红色，P、Sr、Sl都为黑色。所以只需将P沿着S所在的子树向下旋转，使S成为新的根节点、Sl或Sr（分别对应N为P的左子树和右子树）成为N的新的兄弟节点，在对调S与P的颜色。此时N节点就有一个黑色的兄弟节点，就可以进入上面几种情况进行旋转调整。
 这里可以看到，在RBTree进行删除时，其旋转操作也是可以遇见的，最多进行三次旋转。这就是为上面RBTree的效率比AVL高的原因。
 
+### 新增一个算法题
+在坐标系中有一个物品在原点，这个物品每次只可以移动一个单位长度，并且方向只能朝X，Y轴正方向。取第一象限中的任意一个点，请输出所有存在的路径。
 
+采用的逻辑是使用一个结构体来记录所有的可移动信息。
+```java
+public class WayRecord {
+
+    public WayNode node;
+
+    public boolean canGoX;
+    public boolean canGoY;
+
+    public boolean isEnd;
+
+    public WayRecord wayX;
+    public WayRecord wayY;
+    
+}
+```
+
+然后从原点开始，通过递归来查询可能存在的路径。这里由于有两种移动方向，所以会分两个方向进行递归。
+```java
+public boolean test(WayNode s, WayNode e, WayRecord pre) {
+
+        if (s.equals(e)) {
+	        // 达到终点，记录信息
+            pre.isEnd = true;
+            pre.node = e;
+            return true;
+        } else {
+            boolean canGox = false, canGoy = false;
+            WayRecord wayX = new WayRecord(), wayY = new WayRecord();
+
+            if (s.x < e.x) {
+	            // 继续往X轴方向移动
+                canGox = test(s.nextXNode(), e, wayX);
+            }
+
+            if (s.y < e.y) {
+	            // 继续往Y轴方向移动
+                canGoy = test(s.nextYNode(), e, wayY);
+            }
+			
+			// 判断是否存在路径
+            if (canGox || canGoy) {
+                pre.node = s;
+                pre.canGoX = canGox;
+                pre.canGoY = canGoy;
+                pre.wayX = canGox ? wayX : null;
+                pre.wayY = canGoy ? wayY : null;
+            }
+
+            return canGox || canGoy;
+        }
+    }
+```
 
 
