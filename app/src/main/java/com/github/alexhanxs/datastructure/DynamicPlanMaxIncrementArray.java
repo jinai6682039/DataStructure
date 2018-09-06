@@ -1,15 +1,21 @@
 package com.github.alexhanxs.datastructure;
 
+import android.os.SystemClock;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DynamicPlanMaxIncrementArray {
 
-    public void findMaxIncrementArray(int[] sourceArray) {
-
-    }
+    public List<int[]>[] record;
 
     public List<int[]> findSubMaxIncrementArray(int[] subArray) {
+
+
+        if (record != null && record[subArray.length - 1] != null) {
+            return record[subArray.length - 1];
+        }
 
         List<int[]> subMaxIncrementArray = new ArrayList<>();
 
@@ -19,13 +25,17 @@ public class DynamicPlanMaxIncrementArray {
             array[0] = subArray[0];
             subMaxIncrementArray.add(array);
 
+            if (record != null) {
+                record[subArray.length - 1] = subMaxIncrementArray;
+            }
             return subMaxIncrementArray;
         } else {
 
             int[] subs = new int[subArray.length - 1];
             System.arraycopy(subArray, 0, subs, 0, subs.length);
 
-            List<int[]> subLastMaxIncrementArray = findSubMaxIncrementArray(subs);
+            List<int[]> subLastMaxIncrementArray = new ArrayList<>();
+            subLastMaxIncrementArray.addAll(findSubMaxIncrementArray(subs));
 
             int last = subArray[subArray.length - 1];
             int subLast = subs[subs.length - 1];
@@ -45,6 +55,9 @@ public class DynamicPlanMaxIncrementArray {
                     }
                 }
 
+                if (record != null) {
+                    record[subArray.length - 1] = subMaxIncrementArray;
+                }
                 return subMaxIncrementArray;
             } else {
 
@@ -66,7 +79,7 @@ public class DynamicPlanMaxIncrementArray {
                 for (int[] array : subLastMaxIncrementArray) {
                     int lastOfArray = array[array.length - 1];
                     if (lastOfArray < last) {
-                        
+
                         int[] newArray = new int[array.length + 1];
                         System.arraycopy(array, 0, newArray, 0, array.length);
                         newArray[newArray.length - 1] = last;
@@ -85,14 +98,16 @@ public class DynamicPlanMaxIncrementArray {
                         if (array.length == maxLength) {
                             subMaxIncrementArray.add(array);
 
-                        } else if (array.length > maxLength){
+                        } else if (array.length > maxLength) {
                             subMaxIncrementArray.clear();
                             subMaxIncrementArray.add(array);
                             maxLength = array.length;
                         }
                     }
                 }
-
+                if (record != null) {
+                    record[subArray.length - 1] = subMaxIncrementArray;
+                }
                 return subMaxIncrementArray;
             }
         }
@@ -100,12 +115,14 @@ public class DynamicPlanMaxIncrementArray {
 
     public static void main(String[] args) {
 
-        int[] arraySource = {1, 2, 3, 9, 6, 5};
-
+        int[] arraySource = {1, 2, 3, 20, 10, 9, 8, 7, 6, 21, 22, 23, 24};
         DynamicPlanMaxIncrementArray dynamicPlanMaxIncrementArray = new DynamicPlanMaxIncrementArray();
+        int index = 0;
+
+        Date date = new Date();
+        System.out.println("start time : " + date.getTime());
         List<int[]> maxIncrementArrays = dynamicPlanMaxIncrementArray.findSubMaxIncrementArray(arraySource);
 
-        int index = 0;
         for (int[] array : maxIncrementArrays) {
             int length = array.length;
             System.out.print("array" + index + " = [");
@@ -120,7 +137,34 @@ public class DynamicPlanMaxIncrementArray {
             }
             index++;
         }
+        date = new Date();
+        System.out.println("end time : " + date.getTime());
 
+        maxIncrementArrays.clear();
+        index = 0;
+
+        dynamicPlanMaxIncrementArray.record = new ArrayList[arraySource.length];
+
+        date = new Date();
+        System.out.println("start time : " + date.getTime());
+        maxIncrementArrays = dynamicPlanMaxIncrementArray.findSubMaxIncrementArray(arraySource);
+
+        for (int[] array : maxIncrementArrays) {
+            int length = array.length;
+            System.out.print("array" + index + " = [");
+            for (int i = 0; i < length; i++) {
+                System.out.print(array[i]);
+                if (length - 1 != i) {
+                    System.out.print(", ");
+                } else {
+                    System.out.print("]");
+                    System.out.println();
+                }
+            }
+            index++;
+        }
+        date = new Date();
+        System.out.println("end time : " + date.getTime());
     }
 
 }
