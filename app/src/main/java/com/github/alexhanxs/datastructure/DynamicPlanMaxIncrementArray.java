@@ -115,56 +115,61 @@ public class DynamicPlanMaxIncrementArray {
 
     public static void main(String[] args) {
 
-        int[] arraySource = {1, 2, 3, 20, 10, 9, 8, 7, 6, 21, 22, 23, 24};
+        int[] arraySource = {1, 2, 3, 19, 10, 9, 8, 7, 6, 21, 22, 23, 24, 20, 80, 79, 78, 77, 100,
+                101, 102, 200, 199, 198, 197, 196, 300, 299, 298, 297, 295, 294, 293, 290, 400, 401,
+                399, 398, 397, 396, 395, 394};
         DynamicPlanMaxIncrementArray dynamicPlanMaxIncrementArray = new DynamicPlanMaxIncrementArray();
         int index = 0;
 
         Date date = new Date();
         System.out.println("start time : " + date.getTime());
         List<int[]> maxIncrementArrays = dynamicPlanMaxIncrementArray.findSubMaxIncrementArray(arraySource);
-
-        for (int[] array : maxIncrementArrays) {
-            int length = array.length;
-            System.out.print("array" + index + " = [");
-            for (int i = 0; i < length; i++) {
-                System.out.print(array[i]);
-                if (length - 1 != i) {
-                    System.out.print(", ");
-                } else {
-                    System.out.print("]");
-                    System.out.println();
-                }
-            }
-            index++;
-        }
-        date = new Date();
-        System.out.println("end time : " + date.getTime());
+        System.out.println("array count : " + maxIncrementArrays.size());
+//        for (int[] array : maxIncrementArrays) {
+//            int length = array.length;
+//            System.out.print("array" + index + " = [");
+//            for (int i = 0; i < length; i++) {
+//                System.out.print(array[i]);
+//                if (length - 1 != i) {
+//                    System.out.print(", ");
+//                } else {
+//                    System.out.print("]");
+//                    System.out.println();
+//                }
+//            }
+//            index++;
+//        }
+        Date endDate = new Date();
+        System.out.println("end time : " + endDate.getTime());
+        System.out.println("cost time : " + (endDate.getTime() - date.getTime()));
 
         maxIncrementArrays.clear();
         index = 0;
 
+        // begin dynamic planning
         dynamicPlanMaxIncrementArray.record = new ArrayList[arraySource.length];
 
         date = new Date();
         System.out.println("start time : " + date.getTime());
         maxIncrementArrays = dynamicPlanMaxIncrementArray.findSubMaxIncrementArray(arraySource);
-
-        for (int[] array : maxIncrementArrays) {
-            int length = array.length;
-            System.out.print("array" + index + " = [");
-            for (int i = 0; i < length; i++) {
-                System.out.print(array[i]);
-                if (length - 1 != i) {
-                    System.out.print(", ");
-                } else {
-                    System.out.print("]");
-                    System.out.println();
-                }
-            }
-            index++;
-        }
-        date = new Date();
-        System.out.println("end time : " + date.getTime());
+        System.out.println("array count : " + maxIncrementArrays.size());
+//        for (int[] array : maxIncrementArrays) {
+//            int length = array.length;
+//            System.out.print("array" + index + " = [");
+//            for (int i = 0; i < length; i++) {
+//                System.out.print(array[i]);
+//                if (length - 1 != i) {
+//                    System.out.print(", ");
+//                } else {
+//                    System.out.print("]");
+//                    System.out.println();
+//                }
+//            }
+//            index++;
+//        }
+        endDate = new Date();
+        System.out.println("end time : " + endDate.getTime());
+        System.out.println("cost time : " + (endDate.getTime() - date.getTime()));
     }
 
 }
