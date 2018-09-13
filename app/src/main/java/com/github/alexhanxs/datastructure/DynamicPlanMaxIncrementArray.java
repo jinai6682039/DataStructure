@@ -1,7 +1,5 @@
 package com.github.alexhanxs.datastructure;
 
-import android.os.SystemClock;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +66,17 @@ public class DynamicPlanMaxIncrementArray {
                     if (subs[i] < last) {
                         int[] arrayMin = new int[i + 1];
                         System.arraycopy(subs, 0, arrayMin, 0, i + 1);
-                        subLastMaxIncrementArray.addAll(findSubMaxIncrementArray(arrayMin));
+
+                        // 优化 or 负优化？当遍历第一个比最后一个数要小的最长增长队列的长度 不满足要求时过滤
+                        List<int[]> arrayMinMaxs = findSubMaxIncrementArray(arrayMin);
+                        int subLength = subLastMaxIncrementArray.get(0).length;
+                        for (int[] arrayMinMax : arrayMinMaxs) {
+                            if (arrayMinMax.length < subLength - 1)
+                                break;
+                            subLastMaxIncrementArray.add(arrayMinMax);
+                        }
+
+//                        subLastMaxIncrementArray.addAll(findSubMaxIncrementArray(arrayMin));
                         break;
                     }
                 }
