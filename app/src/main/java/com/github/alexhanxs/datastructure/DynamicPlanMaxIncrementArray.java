@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+// 这个有问题
 public class DynamicPlanMaxIncrementArray {
 
     public List<int[]>[] record;
